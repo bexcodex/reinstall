@@ -37,6 +37,27 @@ trap_err() {
     error "Line $line_no return $ret_no"
     sed -n "$line_no"p "$THIS_SCRIPT"
 }
+
+url_encode() {
+    local string="$1"
+    local encoded=""
+    local i
+    
+    for (( i=0; i<${#string}; i++ )); do
+        local c="${string:$i:1}"
+        case $c in
+            [a-zA-Z0-9.~_-]) 
+                encoded="$encoded$c" 
+                ;;
+            *) 
+                printf -v hex "%02X" "'$c"
+                encoded="$encoded%$hex"
+                ;;
+        esac
+    done
+    echo "$encoded"
+}
+
 fdownload() {
     local url="$1"
     local html=$(curl -s "$url")
