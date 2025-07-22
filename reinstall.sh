@@ -39,24 +39,14 @@ trap_err() {
 }
 fdownload() {
     local url="$1"
-    local html
-    if ! html=$(curl -sL "$url"); then
-        echo "Error: Failed to fetch URL $url" >&2
-        return 1
-    fi
+    local html=$(curl -s "$url")
     
     local action_url=$(echo "$html" | grep -oP '<form[^>]+action="\K[^"]+')
     if [[ -z "$action_url" ]]; then
-        echo "Error: Form action not found on $url" >&2
+        echo "Error: Form action not found" >&2
         return 1
     fi
     
-    # Ensure action_url is absolute
-    if [[ ! "$action_url" =~ ^https?:// ]]; then
-        local base_url=$(echo "$url" | grep -oP '^https?://[^/]+')
-        action_url="$base_url$action_url"
-    fi
-
     local params=()
     while IFS= read -r line; do
         local name=$(echo "$line" | grep -oP 'name="\K[^"]+')
