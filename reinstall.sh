@@ -1487,7 +1487,8 @@ Continue?
         else
             # New logic: Only use fdownload if the URL explicitly ends with #ID, indicating it's an MSDL-style link.
             # Otherwise, assume it's a direct ISO/IMG link.
-            if grep -Eiq '\.gravesoft\.dev/#[0-9]+$' <<<"$iso"; then
+            if grep -Eiq '\.massgrave\.dev/.*\.(iso|img)$' <<<"$iso" ||
+                grep -Eiq '\.gravesoft\.dev/#[0-9]+$' <<<"$iso"; then
                 info "Resolving direct link for MSDN/MSDL style link via fdownload..."
                 local resolved_iso
                 if ! resolved_iso=$(fdownload "$iso"); then
